@@ -1,49 +1,14 @@
 import json
 from pathlib import Path
-
-def create_config():
-    BASE_DIR = Path(__file__).resolve().parent
-    FOLDER_CONFIG = BASE_DIR / "CONFIG"
-    FOLDER_CONFIG.mkdir(parents=True, exist_ok=True)
-    CONFIG_FILE = FOLDER_CONFIG / "config_graphmaker.json"
-    if not CONFIG_FILE.exists():
-        CONFIG_FILE.touch()
-    return CONFIG_FILE
+from core.files_init import CONFIG_FILE
 
 def load_config():
-    default_config = {
-        "config": {
-            "default_colour": "#000000",
-            "export_lifetime": 15
-        }
-    }
-
-    try:
-        CONFIG_FILE = create_config()
-
-        if CONFIG_FILE.stat().st_size == 0:
-            with open(CONFIG_FILE, "w", encoding="utf-8") as file:
-                json.dump(default_config, file, indent=4)
-            return default_config
-
-        with open(CONFIG_FILE, "r", encoding="utf-8") as file:
-            try:
-                config_data = json.load(file)
-            except json.JSONDecodeError:
-                config_data = None
-
-        if not isinstance(config_data, dict) or "config" not in config_data:
-            with open(CONFIG_FILE, "w", encoding="utf-8") as file:
-                json.dump(default_config, file, indent=4)
-            return default_config
-
-        return config_data
-    except Exception as e:
-        print(f"Error loading configuration file: {e}")
-        return default_config
+    '''Necesita que se haya cargado bootstrap en main sí o sí'''
+    with open(CONFIG_FILE, "r", encoding="utf-8") as file:
+        config = json.load(file)
+    return config
 
 def update_config(new_config_data):
-    CONFIG_FILE = create_config()
     with open(CONFIG_FILE, "w", encoding="utf-8") as file:
         if isinstance(new_config_data, dict):
             json.dump(new_config_data, file, indent=4)
@@ -51,17 +16,19 @@ def update_config(new_config_data):
             file.write(str(new_config_data))
 
 def show_config():
-    CONFIG_FILE = create_config()
     with open(CONFIG_FILE, "r", encoding="utf-8") as file:
-        config_data = file.read()
+        config = json.load(file)
+        config_dict = config.get("config", {})
+        keys = list(config_dict.keys())
+        
         print("Configuration file content:")
-        print(config_data)
+        for i, (key, value) in enumerate(config_dict.items(), 1):
+            print(f"{i}: {key} ({value})")
+    return config, keys
+    
 
 def modify_config():
-    config = load_config()
-    keys = list(config["config"].keys())
-    for i, key in enumerate(keys, 1):
-        print(f"{i}: {key} ({config['config'][key]})")
+    config, keys = show_config()
     try:
         op = int(input("¿Qué quieres modificar? (número): "))
         if op < 1 or op > len(keys):

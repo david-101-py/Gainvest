@@ -24,10 +24,11 @@ def delete_account(name):
         cursor.execute(f"DELETE FROM values_db WHERE account_id = ?", (account_id,))
     conn.close()
 
-def clear_last_values(account_id, days_range):
+def clear_last_values(account_name, days_range):
+    id = get_id(account_name)
     with sqlite3.connect(DATA_FILE) as conn:
         cursor = conn.cursor()
-        cursor.execute(f"DELETE FROM values_db WHERE account_id = ? AND date < date('now', '-{days_range} days')", (account_id,))
+        cursor.execute(f"DELETE FROM values_db WHERE account_id = ? AND date < date('now', '-{days_range} days')", (id,))
     conn.close()
 
 def give_values_to_account(account_id, value):
@@ -50,14 +51,15 @@ def create_account(name, group=None):
     conn.close()
     return name
 
-def move_account_into_group(name, group):
+def move_account_into_group(name, group_name):
+    id = get_id(name)
     with sqlite3.connect(DATA_FILE) as conn:
         cursor = conn.cursor()
         cursor.execute('''
-                    UPDATE accounts_metadata
-                    SET group_name = ?
-                    WHERE name = ?
-        ''', (group, name))
+            UPDATE series_metadata
+            SET group_id = (SELECT group_id FROM groups WHERE group_name = ?)
+            WHERE account_id = ?;
+ ''', (group_name, id))
     conn.close()
 
 
