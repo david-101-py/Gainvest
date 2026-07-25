@@ -14,13 +14,13 @@ def _create_sql_tables():
         cursor.execute('''CREATE TABLE IF NOT EXISTS accounts_metadata (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     name TEXT NOT NULL UNIQUE,
-                    group_id INTEGER DEFAULT NULL CHECK (parent_group > 0),
+                    group_id INTEGER DEFAULT NULL CHECK (group_id > 0),
                     birth_date DATE NOT NULL,
                     total_ignore BOOLEAN DEFAULT 0
         )''')
         #Table for the metadata of the groups and their parents
         cursor.execute('''CREATE TABLE IF NOT EXISTS groups (
-                    group_id INTEGER PRYMARY KEY AUROINCREMENT,
+                    group_id INTEGER PRIMARY KEY AUTOINCREMENT,
                     group_name TEXT NOT NULL UNIQUE,
                     parent_group INTEGER DEFAULT NULL CHECK (parent_group > 0),
                     birth_date DATE NOT NULL

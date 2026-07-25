@@ -46,9 +46,3 @@ def log_debug(module: str, func: str, msg: str, **data: Any) -> None:
     if data:
         entry["data"] = data
     _write_entry(entry)
-
-#def cleanup_old_logs(days: int = 90) -> None:
-#    cutoff = datetime.now(timezone.utc).timestamp() - (days * 86400)
-#    for f in HISTORY_DIR.glob("graphmaker_*.jsonl"):
-#        if f.stat().st_mtime < cutoff:
-#            f.unlink()

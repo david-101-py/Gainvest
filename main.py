@@ -1,4 +1,4 @@
-import core.bootstrap
+import app.bootstrap
 
 def main():
     # Primero se tiene que cargar todo incluido la configuración y las bases de datos

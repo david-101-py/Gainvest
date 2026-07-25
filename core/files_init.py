@@ -1,5 +1,5 @@
 import json
-from core.folders_init import FOLDER_CONFIG, FOLDER_DATA, FOLDER_HISTORY
+from core.folders_init import FOLDER_CONFIG, FOLDER_DATA
 
 CONFIG_FILE = FOLDER_CONFIG / "config.json"
 DATA_FILE = FOLDER_DATA / "database.db"
@@ -7,7 +7,7 @@ DATA_FILE = FOLDER_DATA / "database.db"
 if not DATA_FILE.exists():
     DATA_FILE.touch(exist_ok=True)
 
-if not CONFIG_FILE.exist():
+if not CONFIG_FILE.exists():
     default_content = {
         "config": {
             "default_colour": "#000000",
