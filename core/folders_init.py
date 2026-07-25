@@ -2,9 +2,9 @@ from platformdirs import user_data_dir
 from platformdirs import user_documents_dir
 from pathlib import Path
 
-HIDDEN_BASE_DIR = Path(user_data_dir("Graphmaker", "David.dev"))
+HIDDEN_BASE_DIR = Path(user_data_dir("Gainvest", "David.dev"))
 
-VISIBLE_BASE_DIR = Path(user_documents_dir()) / "Graphmaker"
+VISIBLE_BASE_DIR = Path(user_documents_dir()) / "Gainvest"
 
 FOLDER_EXPORTS = VISIBLE_BASE_DIR / "EXPORTS"
 FOLDER_INPUTS = HIDDEN_BASE_DIR / "INPUTS FOLDER"
