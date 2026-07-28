@@ -1,5 +1,5 @@
 from pathlib import Path
-import datetime
+from datetime import datetime
 from core.config_init import load_config
 from core.folders_init import visible_folders
 
