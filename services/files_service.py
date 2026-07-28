@@ -1,18 +1,7 @@
 from pathlib import Path
 import datetime
-from services.config_service import load_config
-from core.folders_init import folders
-
-
-def create_path_if_exists(path, is_file=False):
-    if not isinstance(path, Path):
-        path = Path(path)
-    if not path.exists():
-        if is_file:
-            path.touch(exist_ok=True)
-        else:
-            path.mkdir(parents=True, exist_ok=True)
-    return path
+from core.config_init import load_config
+from core.folders_init import visible_folders
 
 def return_file_age(file_path):
     if file_path.exists():
@@ -21,14 +10,10 @@ def return_file_age(file_path):
     return None
 
 def clear_exports():
-    folders = load_folders()
     config_data = load_config()
     max_live_time = config_data["config"]["export_lifetime"]
-    if folders == None:
-        return None
-
     for folder in ["GRAPH_DIR", "TABLE_DIR", "HTML_GRAPH_DIR"]:
-        path = folders[folder]
+        path = visible_folders[folder]
         ages = {}
         for file in path.iterdir():
             if file.is_file():
