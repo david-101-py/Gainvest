@@ -27,3 +27,19 @@ def _create_sql_tables():
         )''')
 
     conn.close()
+
+def execute(query, params=(), fetch=None, commit=False):
+    conn = sqlite3.connect(DATA_FILE)
+    try:
+        cursor = conn.cursor()
+        cursor.execute(query, params)
+        result = None
+        if fetch == "one":
+            result = cursor.fetchone()
+        elif fetch == "all":
+            result = cursor.fetchall()
+        if commit:
+            conn.commit()
+        return result
+    finally:
+        conn.close()
