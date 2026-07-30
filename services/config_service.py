@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 from core.files_init import CONFIG_FILE
-from core.config_init import update_config
+from core.config_init import update_config, load_config
 
 def show_config():
     with open(CONFIG_FILE, "r", encoding="utf-8") as file:
@@ -37,4 +37,7 @@ def modify_config():
     except (ValueError, IndexError):
         print("Entrada inválida.")
     
-
+def modify_config(key, new_value) -> None:
+    config = load_config()
+    config["config"][key] = new_value
+    update_config(config)    
