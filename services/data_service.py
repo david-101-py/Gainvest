@@ -12,6 +12,7 @@ def get_id(name, is_account=True):
 def delete_account(name):
     id = get_id(name)
     execute("DELETE FROM values_db WHERE account_id = ?", (id,), commit=True)
+    execute("DELETE FROM accounts_metadata WHERE id = ?", (id,), commit=True)
 
 def clear_last_values(name, last_values):
     id = get_id(name)
@@ -42,21 +43,34 @@ def create_account(account, group=None):
             VALUES (?, ?)''', (account, datetime.now().strftime("%Y-%m-%d %H:%M:%S")), commit=True)
     return account
 
-def change_account_group(name, parent_group) -> None:
-    id = get_id(name)
-    execute('''
-            UPDATE series_metadata
-            SET group_id = (SELECT group_id FROM groups WHERE group_name = ?)
-            WHERE account_id = ?;
-        ''', (parent_group, id), commit=True)
+def create_group(name, parent_group=None)
+    if parent_group != None:
+        parent_id = get_id(parent_group, is_account=False)
+        execute('''
+        INSERT INTO groups (group_name, parent_group, birth_date) 
+        VALUES (?, ?, ?)''', (name, parent_id, datetime.now().strftime("%Y-%m-%d %H:%M:%S") ), commit=True)
+    else:
+        execute('''
+        INSERT INTO groups (group_name, birth_date) 
+        VALUES (?, ?)''', (name, datetime.now().strftime("%Y-%m-%d %H:%M:%S") ), commit=True)
 
-def change_parent_group(group_name, parent_group) -> None:
-    id = get_id(group_name, is_account=False)
-    execute('''
-            UPDATE groups
-            SET parent_group = (SELECT group_id FROM groups WHERE group_name = ?)
-            WHERE group_id = ?;
-        ''', (parent_group, id), commit=True)
+def change_parent_group(name, parent_group, is_account=True) -> None:
+    if is_account:
+        id = get_id(name)
+        execute('''
+                UPDATE series_metadata
+                SET group_id = (SELECT group_id FROM groups WHERE group_name = ?)
+                WHERE account_id = ?;
+            ''', (parent_group, id), commit=True)
+    else:
+        id = get_id(name, is_account=False)
+        execute('''
+                UPDATE groups
+                SET parent_group = (SELECT group_id FROM groups WHERE group_name = ?)
+                WHERE group_id = ?;
+            ''', (parent_group, id), commit=True)
 
 
 
+#coger los valores-tiempo de una cuenta o de varias
+#insertar varios valores de golpe a una serie
