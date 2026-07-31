@@ -13,3 +13,8 @@ def update_config(new_config_data):
             json.dump(new_config_data, file, indent=4)
         else:
             file.write(str(new_config_data))
+
+def modify_config(key, new_value) -> None:
+    config = load_config()
+    config["config"][key] = new_value
+    update_config(config)    
