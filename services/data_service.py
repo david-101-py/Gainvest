@@ -25,7 +25,7 @@ def clear_last_values(name, last_values):
                 LIMIT ?)
         ''', (id, last_values), commit=True)
 
-def give_values_to_account(name, value):
+def give_values(name, value):
     id = get_id(name)
     execute('''
         INSERT INTO values_db (account_id, value, date) 
@@ -43,7 +43,7 @@ def create_account(account, group=None):
             VALUES (?, ?)''', (account, datetime.now().strftime("%Y-%m-%d %H:%M:%S")), commit=True)
     return account
 
-def create_group(name, parent_group=None)
+def create_group(name, parent_group=None):
     if parent_group != None:
         parent_id = get_id(parent_group, is_account=False)
         execute('''
@@ -70,7 +70,24 @@ def change_parent_group(name, parent_group, is_account=True) -> None:
                 WHERE group_id = ?;
             ''', (parent_group, id), commit=True)
 
+def take_range_values(account, date):
+    id = get_id(account)
+    result = execute('''
+            SELECT value, date FROM values_db WHERE date < ? AND account_id = ?
+        ''', (date, id), fetch="all")
+    return result
 
+def give_multiple_values(account, values):
+    id = get_id(account)
+    all_data = [(id, obj[0], obj[1]) for obj in values]
+    execute('''
+                INSERT INTO values_db (account_id, value, date) 
+                VALUES (?, ?, ?)''' , (all_data), many=True, commit=True)
 
-#coger los valores-tiempo de una cuenta o de varias
-#insertar varios valores de golpe a una serie
+def toogle_total_ignore(account, boolean=True):
+    id = get_id(account)
+    execute('''
+            UPDATE accounts_metadata
+            SET total_ignore = ?
+            WHERE id = ?;
+        ''', (boolean, id), commit=True)

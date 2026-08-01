@@ -6,7 +6,7 @@ def _create_sql_tables():
         cursor = conn.cursor()
         #Table for the values of each account
         cursor.execute(f''' CREATE TABLE IF NOT EXISTS values_db (
-                    account_id INTEGER PRIMARY KEY,
+                    account_id INTEGER,
                     value FLOAT NOT NULL,
                     date DATE NOT NULL
         )''')
@@ -28,11 +28,14 @@ def _create_sql_tables():
 
     conn.close()
 
-def execute(query, params=(), fetch=None, commit=False):
+def execute(query, params=(), many=False, fetch=None, commit=False):
     conn = sqlite3.connect(DATA_FILE)
     try:
         cursor = conn.cursor()
-        cursor.execute(query, params)
+        if many:
+            cursor.executemany(query, params)
+        else:
+            cursor.execute(query, params)
         result = None
         if fetch == "one":
             result = cursor.fetchone()
